@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 
 
 function ParameterSelector(props){
-    const {classes, className, parameterGroups} = props;
+    const {classes, className, parameterGroups, updateParameterGroups, updated, handleParameterSave} = props;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -32,10 +32,18 @@ function ParameterSelector(props){
                         <ParameterListItem
                             key={index}
                             parameterGroup={parameterGroup}
+                            parameterJSONIndex={index}
+                            updateParameterGroups={updateParameterGroups}
                         />
                     ))}
                 </List>
-                <Button className={classes.button} variant="contained" color="primary" disabled>
+                <Button
+                    className={classes.button}
+                    variant="contained"
+                    color="primary"
+                    disabled={updated}
+                    onClick={handleParameterSave}
+                >
                     Save
                 </Button>
             </Paper>
@@ -46,7 +54,10 @@ function ParameterSelector(props){
 ParameterSelector.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
-    parameterGroups: PropTypes.object.isRequired
+    parameterGroups: PropTypes.object.isRequired,
+    updateParameterGroups: PropTypes.func.isRequired,
+    updated: PropTypes.bool.isRequired,
+    handleParameterSave: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(ParameterSelector);

@@ -8,15 +8,13 @@ import LabelImportantIcon from "@material-ui/icons/LabelImportant";
 import ListItemText from "@material-ui/core/ListItemText";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import List from "@material-ui/core/List";
-import StarBorder from "@material-ui/icons/StarBorder";
 import Collapse from "@material-ui/core/Collapse";
 import ParameterListItemDetails from "../ParameterListItemDetails";
 import classNames from "classnames";
 
 
 function ParameterListItem(props){
-    const {classes, className, parameterGroup} = props;
+    const {classes, className, parameterGroup, updateParameterGroups, parameterJSONIndex} = props;
 
     const [open, setOpen] = React.useState(false);
 
@@ -36,7 +34,11 @@ function ParameterListItem(props){
                 {open ? <ExpandLess/> : <ExpandMore/>}
             </ListItem>
             <Collapse in={open} timeout="auto" unmountOnExit>
-                <ParameterListItemDetails parameterGroup={parameterGroup}/>
+                <ParameterListItemDetails
+                    parameterGroup={parameterGroup}
+                    updateParameterGroups={updateParameterGroups}
+                    parameterJSONIndex={parameterJSONIndex}
+                />
             </Collapse>
         </div>
     );
@@ -46,6 +48,8 @@ ParameterListItem.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     parameterGroup: PropTypes.object.isRequired,
+    updateParameterGroups: PropTypes.func.isRequired,
+    parameterJSONIndex: PropTypes.number.isRequired
 }
 
 export default withStyles(styles)(ParameterListItem);

@@ -7,9 +7,10 @@ import React from "react";
 
 
 function ParameterDetailForm(props){
-    const {classes, className, parameterGroup} = props;
+    const {classes, className, parameterGroup, updateParameterGroups, parameterJSONIndex} = props;
 
     const rootClassName = classNames(classes.root, className);
+
 
     return(
         <div className={classes.root}>
@@ -26,6 +27,10 @@ function ParameterDetailForm(props){
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        onChange={event => {
+                            const {value} = event.target;
+                            updateParameterGroups(parameter[0], parameterJSONIndex, value);
+                        }}
                         variant="filled"
                     />
                 ))}
@@ -38,6 +43,8 @@ ParameterDetailForm.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     parameterGroup: PropTypes.object.isRequired,
+    updateParameterGroups: PropTypes.func.isRequired,
+    parameterJSONIndex: PropTypes.number.isRequired
 };
 
 export default withStyles(styles)(ParameterDetailForm);

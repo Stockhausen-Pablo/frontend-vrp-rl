@@ -12,6 +12,8 @@ function ExperimentSimulation(props){
     const {classes, className} = props;
     const [parameterGroups, setParameterGroups] = useState();
 
+    const [updated, setUpdated] = useState(true);
+
     const loadParameterGroups = useCallback(() => {
         ParameterService.getParameterGroups().then(response => response.json()).then(response => {
             setParameterGroups(response);
@@ -19,6 +21,29 @@ function ExperimentSimulation(props){
             alert('Error fetching parameter groups');
         });
     }, []);
+
+    const postParameterGroups = useCallback((updatedParameterGroups) => {
+        ParameterService.updateParameterGroups(updatedParameterGroups).then(response => response.json()).then(response => {
+        }, () => {
+            alert('Error fetching parameter groups');
+        });
+    },[]);
+
+    const handleParameterSave = () => {
+        postParameterGroups(parameterGroups);
+        setUpdated(true);
+    };
+
+    const updateParameterGroups = (parameter, parameterJSONIndex, e) => {
+        const refParameterGroups = {...parameterGroups};
+        const val = parseFloat(e);
+        if (!isNaN(val)){
+            refParameterGroups['groups'][parameterJSONIndex][parameter] = val;
+        }else{
+            refParameterGroups['groups'][parameterJSONIndex][parameter] = e;
+        }
+        setUpdated(false);
+    }
 
     const rootClassName = classNames(classes.root, className);
 
@@ -32,7 +57,12 @@ function ExperimentSimulation(props){
         <div className={rootClassName}>
             <h1>test</h1>
             {parameterGroups &&
-            <ParameterSelector parameterGroups={parameterGroups}/>
+            <ParameterSelector
+                parameterGroups={parameterGroups}
+                updateParameterGroups={updateParameterGroups}
+                updated={updated}
+                handleParameterSave={handleParameterSave}
+            />
             }
         </div>
     );

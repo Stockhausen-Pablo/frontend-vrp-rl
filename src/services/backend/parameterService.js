@@ -11,8 +11,14 @@ export class ParameterService {
         });
     }
 
-    static updateParameterGroups(){
-
+    static updateParameterGroups(updatedParameterGroups){
+        return fetch(`${baseUri}/groups/update`, {
+            method: 'POST',
+            body: JSON.stringify(updatedParameterGroups),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
     }
 
 }

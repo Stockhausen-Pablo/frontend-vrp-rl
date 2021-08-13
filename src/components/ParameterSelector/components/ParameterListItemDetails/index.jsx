@@ -9,14 +9,18 @@ import ParameterDetailForm from "../ParameterDetailForm";
 
 
 function ParameterListItemDetails(props){
-    const {classes, className, parameterGroup} = props;
+    const {classes, className, parameterGroup, updateParameterGroups, parameterJSONIndex} = props;
 
     const rootClassName = classNames(classes.root, className);
 
     return(
         <List component="div" disablePadding>
             <ListItem button className={classes.nested}>
-                <ParameterDetailForm parameterGroup={parameterGroup}/>
+                <ParameterDetailForm
+                    parameterGroup={parameterGroup}
+                    updateParameterGroups={updateParameterGroups}
+                    parameterJSONIndex={parameterJSONIndex}
+                />
             </ListItem>
         </List>
     );
@@ -26,6 +30,8 @@ ParameterListItemDetails.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     parameterGroup: PropTypes.object.isRequired,
+    updateParameterGroups: PropTypes.func.isRequired,
+    parameterJSONIndex: PropTypes.number.isRequired
 };
 
 export default withStyles(styles)(ParameterListItemDetails);
