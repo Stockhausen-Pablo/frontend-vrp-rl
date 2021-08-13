@@ -3,23 +3,20 @@ import {withStyles} from "@material-ui/core";
 import styles from "../../styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import StarBorder from "@material-ui/icons/StarBorder";
-import ListItemText from "@material-ui/core/ListItemText";
-import Collapse from "@material-ui/core/Collapse";
 import React from "react";
+import classNames from "classnames";
+import ParameterDetailForm from "../ParameterDetailForm";
 
 
 function ParameterListItemDetails(props){
-    const {classes, className, parameters} = props;
+    const {classes, className, parameterGroup} = props;
+
+    const rootClassName = classNames(classes.root, className);
 
     return(
         <List component="div" disablePadding>
             <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                    <StarBorder />
-                </ListItemIcon>
-                <ListItemText primary="Starred" />
+                <ParameterDetailForm parameterGroup={parameterGroup}/>
             </ListItem>
         </List>
     );
@@ -28,7 +25,7 @@ function ParameterListItemDetails(props){
 ParameterListItemDetails.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
-    parameters: PropTypes.array.isRequired,
+    parameterGroup: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ParameterListItemDetails);

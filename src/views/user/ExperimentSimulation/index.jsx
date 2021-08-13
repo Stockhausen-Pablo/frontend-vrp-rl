@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {withStyles} from '@material-ui/core';
 import styles from './styles'
 import {compose} from 'recompose';
@@ -10,7 +10,7 @@ import {ParameterService} from "../../../services/backend/parameterService"
 
 function ExperimentSimulation(props){
     const {classes, className} = props;
-    const [parameterGroups, setParameterGroups] = useState([]);
+    const [parameterGroups, setParameterGroups] = useState();
 
     const loadParameterGroups = useCallback(() => {
         ParameterService.getParameterGroups().then(response => response.json()).then(response => {
@@ -18,16 +18,22 @@ function ExperimentSimulation(props){
         }, () => {
             alert('Error fetching parameter groups');
         });
-    }, [setParameterGroups]);
+    }, []);
 
     const rootClassName = classNames(classes.root, className);
+
+    useEffect(() => {
+        loadParameterGroups();
+    }, []);
 
     console.log(parameterGroups)
 
     return(
         <div className={rootClassName}>
             <h1>test</h1>
-
+            {parameterGroups &&
+            <ParameterSelector parameterGroups={parameterGroups}/>
+            }
         </div>
     );
 }

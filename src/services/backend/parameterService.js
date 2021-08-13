@@ -10,4 +10,9 @@ export class ParameterService {
             }
         });
     }
+
+    static updateParameterGroups(){
+
+    }
+
 }

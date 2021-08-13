@@ -7,4 +7,8 @@ export default theme => ({
     nested: {
         paddingLeft: theme.spacing(4),
     },
+    button: {
+        width: '100%',
+        padding: theme.spacing(1)
+    }
 });
