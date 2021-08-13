@@ -24,5 +24,10 @@ export default theme => ({
         padding: theme.spacing(1),
         display: "flex",
         marginTop: "10px"
+    },
+    bar:{
+        height: '15px',
+        borderRadius: 5,
+        backgroundColor: '#63b0f6',
     }
 });

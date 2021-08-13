@@ -16,6 +16,15 @@ import {RenderStreamService} from "../../../services/backend/renderStreamService
 function ExperimentSimulation(props){
     const {classes, className} = props;
     const [parameterGroups, setParameterGroups] = useState();
+    const [tabState, setTabState] = React.useState(0);
+    const [stateUpdate, setStateUpdate] = useState({
+        epoch: '',
+        policy_reward: '',
+        sum_G_t: '',
+        best_policy_reward: '',
+        worst_policy_reward: '',
+        policy_tours_base64: ''
+    });
 
     const [base64ImageCords, setBase64ImageCords] = useState("");
     const [base64ImageStopNr, setBase64ImageStopNr] = useState("");
@@ -35,6 +44,7 @@ function ExperimentSimulation(props){
     }, []);
 
     const startMLTrainingInstance = useCallback(() => {
+        setTabState(2);
         MLService.startMLTraining().then(response => response.json()).then(response => {
             console.log(response);
         }, () => {
@@ -57,6 +67,7 @@ function ExperimentSimulation(props){
             setNeedsRefresh(true);
             setBase64ImageCords("");
             setBase64ImageStopNr("");
+            setTabState(0);
             }, () => {
             alert('Error updating parameter groups');
         });
@@ -69,6 +80,10 @@ function ExperimentSimulation(props){
     const handleStartTraining = () => {
         setTrainingState(true);
         startMLTrainingInstance();
+    };
+
+    const handleTabStateChange = (event, newValue) => {
+        setTabState(newValue);
     };
 
     const updateParameterGroups = (parameter, parameterJSONIndex, e) => {
@@ -97,15 +112,21 @@ function ExperimentSimulation(props){
         console.log("Training");
         console.log(trainingState);
         if(trainingState){
+            console.log("start sse");
             const sse = new EventSource('http://127.0.0.1:5000/ml-service/training/stream/stats');
-            function getRealtimeData(data) {
-                console.log(data);
-            }
             sse.onmessage = function(event) {
-                console.log(event);
+                const obj = JSON.parse(event.data);
+                setStateUpdate({
+                    epoch: obj.epoch,
+                    policy_reward: obj.policy_reward,
+                    sum_G_t: obj.sum_G_t,
+                    best_policy_reward: obj.best_policy_reward,
+                    worst_policy_reward: obj.worst_policy_reward,
+                    policy_tours_base64: obj.policy_tours_base64
+                });
             }
-            console.log(sse);
             sse.onerror = () => {
+                console.log("sse failed");
                 setTrainingState(false);
                 sse.close();
             }
@@ -131,11 +152,17 @@ function ExperimentSimulation(props){
                             }
                     </Grid>
                     <Grid item xs={6}>
-                        <ImageRenderStream
-                            base64ImageCords={base64ImageCords}
-                            base64ImageStopNr={base64ImageStopNr}
-                            handleStartTraining={handleStartTraining}
-                        />
+                        {parameterGroups &&
+                            <ImageRenderStream
+                                base64ImageCords={base64ImageCords}
+                                base64ImageStopNr={base64ImageStopNr}
+                                handleStartTraining={handleStartTraining}
+                                episodeNumber={parameterGroups['groups'][1]['num_episodes']}
+                                stateUpdate={stateUpdate}
+                                tabState={tabState}
+                                setTabState={setTabState}
+                            />
+                        }
                     </Grid>
                     <Grid item xs={3}>
                         <StatsRenderStream/>
