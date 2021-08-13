@@ -4,4 +4,7 @@ export default theme => ({
         maxWidth: '100%',
         backgroundColor: theme.palette.background.paper,
     },
+    Tabs:{
+        borderBottom: "3px solid rgb(212, 212, 212)"
+    }
 });
