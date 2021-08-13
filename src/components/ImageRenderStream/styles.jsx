@@ -8,8 +8,8 @@ export default theme => ({
         borderBottom: "3px solid rgb(212, 212, 212)"
     },
     imgPlot:{
-        width: '100%',
-        height: '100%',
+        width: '82%',
+        height: '82%',
         maxWidth: '100%',
         maxHeight: '100%'
     },
@@ -20,14 +20,22 @@ export default theme => ({
         },
     },
     button: {
-        width: '50%',
+        width: '24%',
         padding: theme.spacing(1),
-        display: "flex",
-        marginTop: "10px"
+        marginTop: "10px",
     },
     bar:{
         height: '15px',
         borderRadius: 5,
         backgroundColor: '#97cbf3',
+    },
+    rightButton:{
+        width: '25%',
+        padding: theme.spacing(1),
+        marginTop: "10px",
+    },
+    buttonContainer:{
+        flexDirection: 'row',
+        padding: theme.spacing(1),
     }
 });

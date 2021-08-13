@@ -39,10 +39,10 @@ function ParameterSelector(props){
             </Paper>
             <Button
                 className={classes.button}
-                variant="contained"
                 color="primary"
                 disabled={updated}
                 onClick={handleParameterSave}
+                variant="contained"
             >
                 Save
             </Button>
@@ -53,10 +53,10 @@ function ParameterSelector(props){
 ParameterSelector.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
+    handleParameterSave: PropTypes.func.isRequired,
     parameterGroups: PropTypes.object.isRequired,
     updateParameterGroups: PropTypes.func.isRequired,
     updated: PropTypes.bool.isRequired,
-    handleParameterSave: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(ParameterSelector);

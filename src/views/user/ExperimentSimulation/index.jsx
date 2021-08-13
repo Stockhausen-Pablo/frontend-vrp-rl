@@ -25,7 +25,8 @@ function ExperimentSimulation(props){
         worst_policy_reward: '',
         policy_tours_base64: '',
         policy_reward_improvement: '',
-        sum_G_t_reward_improvement: ''
+        sum_G_t_reward_improvement: '',
+        stats_title: ''
     });
 
     const [base64ImageCords, setBase64ImageCords] = useState("");
@@ -35,8 +36,10 @@ function ExperimentSimulation(props){
 
     const [needsRefresh, setNeedsRefresh] = useState(true);
     const [updated, setUpdated] = useState(true);
+
     const [debounceStartTraining, setDebounceStartTraining] = useState(false);
     const [trainingState, setTrainingState] = useState(false);
+    const [testingState, setTestingState] = useState(false);
 
     const loadParameterGroups = useCallback(() => {
         ParameterService.getParameterGroups().then(response => response.json()).then(response => {
@@ -127,7 +130,8 @@ function ExperimentSimulation(props){
                     worst_policy_reward: obj.worst_policy_reward,
                     policy_tours_base64: obj.policy_tours_base64,
                     policy_reward_improvement: obj.policy_reward_improvement,
-                    sum_G_t_reward_improvement: obj.sum_G_t_reward_improvement
+                    sum_G_t_reward_improvement: obj.sum_G_t_reward_improvement,
+                    stats_title: 'Training-Stats'
                 });
             }
             sse.onerror = () => {
@@ -164,7 +168,7 @@ function ExperimentSimulation(props){
                                 debounceStartTraining={debounceStartTraining}
                                 episodeNumber={parameterGroups['groups'][1]['num_episodes']}
                                 handleStartTraining={handleStartTraining}
-                                setTabState={setTabState}
+                                handleTabStateChange={handleTabStateChange}
                                 stateUpdate={stateUpdate}
                                 tabState={tabState}
                             />
@@ -173,6 +177,7 @@ function ExperimentSimulation(props){
                     <Grid item xs={3}>
                         <StatsRenderStream
                             stateUpdate={stateUpdate}
+                            trainingState={trainingState}
                         />
                     </Grid>
                 </Grid>

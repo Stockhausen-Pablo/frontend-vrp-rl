@@ -20,7 +20,7 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 
 function StatsRenderStream(props){
-    const {classes, className, stateUpdate} = props;
+    const {classes, className, stateUpdate, trainingState} = props;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -38,52 +38,62 @@ function StatsRenderStream(props){
     }
 
 
-
     return(
         <div className={rootClassName}>
             <Paper style={{height: 800, maxHeight: 800, overflow: 'auto'}} elevation={3}>
-                <List className={classes.root}>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <AssistantPhotoIcon color='primary'/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={stateUpdate.epoch.length > 0 ? (parseInt(stateUpdate.epoch)) + 1 : ''} secondary="Epoch" />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                {renderSwitch(parseInt(stateUpdate.policy_reward_improvement))}
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={stateUpdate.policy_reward} secondary="Current Policy Reward" />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                {renderSwitch(parseInt(stateUpdate.sum_G_t_reward_improvement))}
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={stateUpdate.sum_G_t} secondary="Summed cumulative Reward" />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <TrendingUpIcon className={classes.improveIcon}/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={stateUpdate.best_policy_reward} secondary="Best overall Policy Reward" />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <TrendingDownIcon className={classes.worseIcon}/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={stateUpdate.worst_policy_reward} secondary="Worst overall Policy Reward" />
-                    </ListItem>
-                </List>
+                {trainingState ?
+                    <div>
+                    <h2>&nbsp;{stateUpdate.stats_title}</h2>
+                    <List className={classes.root}>
+                        <ListItem>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    <AssistantPhotoIcon color='primary'/>
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={stateUpdate.epoch.length > 0 ? (parseInt(stateUpdate.epoch)) + 1 : ''}
+                                secondary="Epoch"/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    {renderSwitch(parseInt(stateUpdate.policy_reward_improvement))}
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={stateUpdate.policy_reward} secondary="Current Policy Reward"/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    {renderSwitch(parseInt(stateUpdate.sum_G_t_reward_improvement))}
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={stateUpdate.sum_G_t} secondary="Summed cumulative Reward"/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    <TrendingUpIcon className={classes.improveIcon}/>
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={stateUpdate.best_policy_reward}
+                                          secondary="Best overall Policy Reward"/>
+                        </ListItem>
+                        <ListItem>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    <TrendingDownIcon className={classes.worseIcon}/>
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={stateUpdate.worst_policy_reward}
+                                          secondary="Worst overall Policy Reward"/>
+                        </ListItem>
+                    </List>
+                    </div>
+                :
+                    <p>No Training Instance found.</p>
+                }
             </Paper>
         </div>
     )
@@ -93,6 +103,7 @@ StatsRenderStream.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     stateUpdate: PropTypes.object.isRequired,
+    trainingState: PropTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(StatsRenderStream);
