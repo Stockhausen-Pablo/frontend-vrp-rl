@@ -10,11 +10,16 @@ import {ParameterService} from "../../../services/backend/parameterService"
 import ImageRenderStream from "../../../components/ImageRenderStream";
 import Grid from '@material-ui/core/Grid';
 import StatsRenderStream from "../../../components/StatsRenderStream";
+import {RenderStreamService} from "../../../services/backend/renderStreamService";
 
 function ExperimentSimulation(props){
     const {classes, className} = props;
     const [parameterGroups, setParameterGroups] = useState();
 
+    const [base64ImageCords, setBase64ImageCords] = useState("");
+    const [base64ImageStopNr, setBase64ImageStopNr] = useState("");
+
+    const [needsRefresh, setNeedsRefresh] = useState(true);
     const [updated, setUpdated] = useState(true);
 
     const loadParameterGroups = useCallback(() => {
@@ -25,16 +30,28 @@ function ExperimentSimulation(props){
         });
     }, []);
 
+    const loadImageContextPlots = useCallback(() => {
+        RenderStreamService.getImageContextPlots().then(response => response.json()).then(response => {
+            setBase64ImageCords(response.plot1_coords);
+            setBase64ImageStopNr(response.plot2_stopnr);
+        }, () => {
+            alert('Error fetching coord context plots');
+        });
+    },[]);
+
     const postParameterGroups = useCallback((updatedParameterGroups) => {
         ParameterService.updateParameterGroups(updatedParameterGroups).then(response => response.json()).then(response => {
-        }, () => {
-            alert('Error fetching parameter groups');
+            setUpdated(true);
+            setNeedsRefresh(true);
+            setBase64ImageCords("");
+            setBase64ImageStopNr("");
+            }, () => {
+            alert('Error updating parameter groups');
         });
     },[]);
 
     const handleParameterSave = () => {
         postParameterGroups(parameterGroups);
-        setUpdated(true);
     };
 
     const updateParameterGroups = (parameter, parameterJSONIndex, e) => {
@@ -51,10 +68,13 @@ function ExperimentSimulation(props){
     const rootClassName = classNames(classes.root, className);
 
     useEffect(() => {
-        loadParameterGroups();
-    }, []);
+        if (needsRefresh === true){
+            loadParameterGroups();
+            loadImageContextPlots();
+            setNeedsRefresh(false);
+        }
+    }, [needsRefresh, loadParameterGroups, loadImageContextPlots]);
 
-    console.log(parameterGroups)
 
     return(
         <div className={rootClassName}>
@@ -74,7 +94,10 @@ function ExperimentSimulation(props){
                             }
                     </Grid>
                     <Grid item xs={6}>
-                        <ImageRenderStream/>
+                        <ImageRenderStream
+                            base64ImageCords={base64ImageCords}
+                            base64ImageStopNr={base64ImageStopNr}
+                        />
                     </Grid>
                     <Grid item xs={3}>
                         <StatsRenderStream/>

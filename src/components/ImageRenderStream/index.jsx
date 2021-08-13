@@ -7,6 +7,7 @@ import React from "react";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./components/TabPanel";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 function a11yProps(index) {
     return {
@@ -16,7 +17,7 @@ function a11yProps(index) {
 }
 
 function ImageRenderStream(props){
-    const {classes, className} = props;
+    const {classes, className, base64ImageCords, base64ImageStopNr} = props;
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -36,21 +37,37 @@ function ImageRenderStream(props){
                     textColor="primary"
                     centered
                 >
-                    <Tab label="Context" {...a11yProps(0)}/>
-                    <Tab label="Training" {...a11yProps(1)}/>
-                    <Tab label="Testing" {...a11yProps(2)}/>
+                    <Tab label="Context-Cords" {...a11yProps(0)}/>
+                    <Tab label="Context-StopNr" {...a11yProps(1)}/>
+                    <Tab label="Training" {...a11yProps(2)}/>
+                    <Tab label="Testing" {...a11yProps(3)}/>
                 </Tabs>
                 <TabPanel
                     index={0}
                     value={value}
                 >
-                    Item One
+                    {base64ImageCords.length > 0 ?
+                        <img
+                            className={classes.imgPlot}
+                            src={`data:image/png;base64,${base64ImageCords}`}
+                        />
+                        :
+                        <CircularProgress className={classes.progress}/>
+                    }
                 </TabPanel>
                 <TabPanel
                     index={1}
                     value={value}
                 >
-                    Item Two
+                    {base64ImageStopNr.length > 0 ?
+                        <img
+                            className={classes.imgPlot}
+                            src={`data:image/png;base64,${base64ImageStopNr}`}
+                        />
+                        :
+                        <CircularProgress className={classes.progress}/>
+                    }
+
                 </TabPanel>
                 <TabPanel
                     index={2}
@@ -66,6 +83,8 @@ function ImageRenderStream(props){
 ImageRenderStream.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
+    base64ImageCords: PropTypes.string.isRequired,
+    base64ImageStopNr: PropTypes.string.isRequired
 }
 
 export default withStyles(styles)(ImageRenderStream);

@@ -6,5 +6,17 @@ export default theme => ({
     },
     Tabs:{
         borderBottom: "3px solid rgb(212, 212, 212)"
+    },
+    imgPlot:{
+        width: '100%',
+        height: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%'
+    },
+    progress:{
+        display: 'flex',
+        '& > * + *': {
+            marginLeft: theme.spacing(2),
+        },
     }
 });
