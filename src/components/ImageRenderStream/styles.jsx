@@ -28,6 +28,6 @@ export default theme => ({
     bar:{
         height: '15px',
         borderRadius: 5,
-        backgroundColor: '#63b0f6',
+        backgroundColor: '#97cbf3',
     }
 });

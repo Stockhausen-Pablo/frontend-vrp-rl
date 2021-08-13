@@ -23,7 +23,9 @@ function ExperimentSimulation(props){
         sum_G_t: '',
         best_policy_reward: '',
         worst_policy_reward: '',
-        policy_tours_base64: ''
+        policy_tours_base64: '',
+        policy_reward_improvement: '',
+        sum_G_t_reward_improvement: ''
     });
 
     const [base64ImageCords, setBase64ImageCords] = useState("");
@@ -33,6 +35,7 @@ function ExperimentSimulation(props){
 
     const [needsRefresh, setNeedsRefresh] = useState(true);
     const [updated, setUpdated] = useState(true);
+    const [debounceStartTraining, setDebounceStartTraining] = useState(false);
     const [trainingState, setTrainingState] = useState(false);
 
     const loadParameterGroups = useCallback(() => {
@@ -44,11 +47,14 @@ function ExperimentSimulation(props){
     }, []);
 
     const startMLTrainingInstance = useCallback(() => {
+        setDebounceStartTraining(true);
         setTabState(2);
         MLService.startMLTraining().then(response => response.json()).then(response => {
             console.log(response);
+            setDebounceStartTraining(false);
         }, () => {
             alert('Error starting training instance');
+            setDebounceStartTraining(false);
         });
     }, []);
 
@@ -109,10 +115,7 @@ function ExperimentSimulation(props){
 
 
     useEffect(() => {
-        console.log("Training");
-        console.log(trainingState);
         if(trainingState){
-            console.log("start sse");
             const sse = new EventSource('http://127.0.0.1:5000/ml-service/training/stream/stats');
             sse.onmessage = function(event) {
                 const obj = JSON.parse(event.data);
@@ -122,7 +125,9 @@ function ExperimentSimulation(props){
                     sum_G_t: obj.sum_G_t,
                     best_policy_reward: obj.best_policy_reward,
                     worst_policy_reward: obj.worst_policy_reward,
-                    policy_tours_base64: obj.policy_tours_base64
+                    policy_tours_base64: obj.policy_tours_base64,
+                    policy_reward_improvement: obj.policy_reward_improvement,
+                    sum_G_t_reward_improvement: obj.sum_G_t_reward_improvement
                 });
             }
             sse.onerror = () => {
@@ -136,7 +141,7 @@ function ExperimentSimulation(props){
 
     return(
         <div className={rootClassName}>
-            <div>
+            <div style={{display: 'flex',  justifyContent:'center', alignItems:'center'}}>
                 <h1>Bachelorarbeit - Pablo Stockhausen</h1>
             </div>
             <div className={classes.componentStructure}>
@@ -144,10 +149,10 @@ function ExperimentSimulation(props){
                     <Grid item xs={3}>
                             {parameterGroups &&
                                 <ParameterSelector
+                                    handleParameterSave={handleParameterSave}
                                     parameterGroups={parameterGroups}
                                     updateParameterGroups={updateParameterGroups}
                                     updated={updated}
-                                    handleParameterSave={handleParameterSave}
                                 />
                             }
                     </Grid>
@@ -156,16 +161,19 @@ function ExperimentSimulation(props){
                             <ImageRenderStream
                                 base64ImageCords={base64ImageCords}
                                 base64ImageStopNr={base64ImageStopNr}
-                                handleStartTraining={handleStartTraining}
+                                debounceStartTraining={debounceStartTraining}
                                 episodeNumber={parameterGroups['groups'][1]['num_episodes']}
+                                handleStartTraining={handleStartTraining}
+                                setTabState={setTabState}
                                 stateUpdate={stateUpdate}
                                 tabState={tabState}
-                                setTabState={setTabState}
                             />
                         }
                     </Grid>
                     <Grid item xs={3}>
-                        <StatsRenderStream/>
+                        <StatsRenderStream
+                            stateUpdate={stateUpdate}
+                        />
                     </Grid>
                 </Grid>
             </div>

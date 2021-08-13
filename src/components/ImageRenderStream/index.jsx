@@ -19,7 +19,7 @@ function a11yProps(index) {
 }
 
 function ImageRenderStream(props){
-    const {classes, className, base64ImageCords, base64ImageStopNr, handleStartTraining, stateUpdate, episodeNumber, tabState, setTabState} = props;
+    const {classes, className, base64ImageCords, base64ImageStopNr, handleStartTraining, stateUpdate, episodeNumber, tabState, setTabState, debounceStartTraining} = props;
     const [value, setValue] = React.useState(0);
     const [progress, setProgress] = React.useState(0);
 
@@ -100,6 +100,7 @@ function ImageRenderStream(props){
                 variant="contained"
                 color="primary"
                 onClick={handleStartTraining}
+                disabled={debounceStartTraining}
             >
                 Start Training
             </Button>
@@ -117,6 +118,7 @@ ImageRenderStream.propTypes = {
     episodeNumber: PropTypes.number.isRequired,
     tabState: PropTypes.number.isRequired,
     setTabState: PropTypes.func.isRequired,
+    debounceStartTraining: PropTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(ImageRenderStream);

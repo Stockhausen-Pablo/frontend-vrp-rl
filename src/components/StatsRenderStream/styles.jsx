@@ -6,4 +6,13 @@ export default theme => ({
         flexDirection:'column',
         backgroundColor: theme.palette.background.paper,
     },
+    improveIcon:{
+        color: '#0af305'
+    },
+    worseIcon:{
+        color: '#f3053d'
+    },
+    equalIcon:{
+        color: '#05ebf3'
+    }
 });
