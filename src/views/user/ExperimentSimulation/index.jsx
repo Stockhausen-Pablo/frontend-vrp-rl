@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import ParameterSelector from "../../../components/ParameterSelector";
 
 import {ParameterService} from "../../../services/backend/parameterService"
+import {MLService} from "../../../services/backend/mlService"
 import ImageRenderStream from "../../../components/ImageRenderStream";
 import Grid from '@material-ui/core/Grid';
 import StatsRenderStream from "../../../components/StatsRenderStream";
@@ -19,14 +20,25 @@ function ExperimentSimulation(props){
     const [base64ImageCords, setBase64ImageCords] = useState("");
     const [base64ImageStopNr, setBase64ImageStopNr] = useState("");
 
+    const [base64ImagePolicyTour, setBase64ImagePolicyTour] = useState("");
+
     const [needsRefresh, setNeedsRefresh] = useState(true);
     const [updated, setUpdated] = useState(true);
+    const [trainingState, setTrainingState] = useState(false);
 
     const loadParameterGroups = useCallback(() => {
         ParameterService.getParameterGroups().then(response => response.json()).then(response => {
             setParameterGroups(response);
         }, () => {
             alert('Error fetching parameter groups');
+        });
+    }, []);
+
+    const startMLTrainingInstance = useCallback(() => {
+        MLService.startMLTraining().then(response => response.json()).then(response => {
+            console.log(response);
+        }, () => {
+            alert('Error starting training instance');
         });
     }, []);
 
@@ -54,6 +66,11 @@ function ExperimentSimulation(props){
         postParameterGroups(parameterGroups);
     };
 
+    const handleStartTraining = () => {
+        setTrainingState(true);
+        startMLTrainingInstance();
+    };
+
     const updateParameterGroups = (parameter, parameterJSONIndex, e) => {
         const refParameterGroups = {...parameterGroups};
         const val = parseFloat(e);
@@ -76,6 +93,26 @@ function ExperimentSimulation(props){
     }, [needsRefresh, loadParameterGroups, loadImageContextPlots]);
 
 
+    useEffect(() => {
+        console.log("Training");
+        console.log(trainingState);
+        if(trainingState){
+            const sse = new EventSource('http://127.0.0.1:5000/ml-service/training/stream/stats');
+            function getRealtimeData(data) {
+                console.log(data);
+            }
+            sse.onmessage = function(event) {
+                console.log(event);
+            }
+            console.log(sse);
+            sse.onerror = () => {
+                setTrainingState(false);
+                sse.close();
+            }
+        }
+
+    }, [trainingState, startMLTrainingInstance]);
+
     return(
         <div className={rootClassName}>
             <div>
@@ -97,6 +134,7 @@ function ExperimentSimulation(props){
                         <ImageRenderStream
                             base64ImageCords={base64ImageCords}
                             base64ImageStopNr={base64ImageStopNr}
+                            handleStartTraining={handleStartTraining}
                         />
                     </Grid>
                     <Grid item xs={3}>

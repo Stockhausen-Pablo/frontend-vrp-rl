@@ -8,6 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./components/TabPanel";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Button from "@material-ui/core/Button";
 
 function a11yProps(index) {
     return {
@@ -17,7 +18,7 @@ function a11yProps(index) {
 }
 
 function ImageRenderStream(props){
-    const {classes, className, base64ImageCords, base64ImageStopNr} = props;
+    const {classes, className, base64ImageCords, base64ImageStopNr, handleStartTraining} = props;
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -67,7 +68,6 @@ function ImageRenderStream(props){
                         :
                         <CircularProgress className={classes.progress}/>
                     }
-
                 </TabPanel>
                 <TabPanel
                     index={2}
@@ -76,6 +76,14 @@ function ImageRenderStream(props){
                     Item Three
                 </TabPanel>
             </Paper>
+            <Button
+                className={classes.button}
+                variant="contained"
+                color="primary"
+                onClick={handleStartTraining}
+            >
+                Start Training
+            </Button>
         </div>
     )
 }
@@ -84,7 +92,8 @@ ImageRenderStream.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     base64ImageCords: PropTypes.string.isRequired,
-    base64ImageStopNr: PropTypes.string.isRequired
+    base64ImageStopNr: PropTypes.string.isRequired,
+    handleStartTraining: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(ImageRenderStream);

@@ -18,5 +18,11 @@ export default theme => ({
         '& > * + *': {
             marginLeft: theme.spacing(2),
         },
+    },
+    button: {
+        width: '50%',
+        padding: theme.spacing(1),
+        display: "flex",
+        marginTop: "10px"
     }
 });
