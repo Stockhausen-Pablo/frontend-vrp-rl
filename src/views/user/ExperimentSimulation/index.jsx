@@ -7,6 +7,9 @@ import classNames from 'classnames';
 import ParameterSelector from "../../../components/ParameterSelector";
 
 import {ParameterService} from "../../../services/backend/parameterService"
+import ImageRenderStream from "../../../components/ImageRenderStream";
+import Grid from '@material-ui/core/Grid';
+import StatsRenderStream from "../../../components/StatsRenderStream";
 
 function ExperimentSimulation(props){
     const {classes, className} = props;
@@ -55,15 +58,29 @@ function ExperimentSimulation(props){
 
     return(
         <div className={rootClassName}>
-            <h1>test</h1>
-            {parameterGroups &&
-            <ParameterSelector
-                parameterGroups={parameterGroups}
-                updateParameterGroups={updateParameterGroups}
-                updated={updated}
-                handleParameterSave={handleParameterSave}
-            />
-            }
+            <div>
+                <h1>Bachelorarbeit - Pablo Stockhausen</h1>
+            </div>
+            <div className={classes.componentStructure}>
+                <Grid container spacing={3}>
+                    <Grid item xs={3}>
+                            {parameterGroups &&
+                                <ParameterSelector
+                                    parameterGroups={parameterGroups}
+                                    updateParameterGroups={updateParameterGroups}
+                                    updated={updated}
+                                    handleParameterSave={handleParameterSave}
+                                />
+                            }
+                    </Grid>
+                    <Grid item xs={6}>
+                        <ImageRenderStream/>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <StatsRenderStream/>
+                    </Grid>
+                </Grid>
+            </div>
         </div>
     );
 }

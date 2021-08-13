@@ -1,7 +1,9 @@
 export default theme => ({
     root: {
         width: '100%',
-        maxWidth: 360,
+        maxWidth: '100%',
+        display:'flex',
+        flexDirection:'column',
         backgroundColor: theme.palette.background.paper,
     },
     nested: {
@@ -9,6 +11,8 @@ export default theme => ({
     },
     button: {
         width: '100%',
-        padding: theme.spacing(1)
+        padding: theme.spacing(1),
+        display: "flex",
+        marginTop: "10px"
     }
 });

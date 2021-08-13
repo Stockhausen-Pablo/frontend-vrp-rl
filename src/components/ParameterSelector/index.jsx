@@ -17,7 +17,7 @@ function ParameterSelector(props){
 
     return(
         <div className={rootClassName}>
-            <Paper>
+            <Paper style={{height: 800, maxHeight: 800, overflow: 'auto'}} elevation={3}>
                 <List
                     component="nav"
                     aria-labelledby="nested-list-subheader"
@@ -26,7 +26,6 @@ function ParameterSelector(props){
                             VRP-ML
                         </ListSubheader>
                     }
-                    className={classes.root}
                 >
                     {parameterGroups.groups.map((parameterGroup, index) => (
                         <ParameterListItem
@@ -37,16 +36,16 @@ function ParameterSelector(props){
                         />
                     ))}
                 </List>
-                <Button
-                    className={classes.button}
-                    variant="contained"
-                    color="primary"
-                    disabled={updated}
-                    onClick={handleParameterSave}
-                >
-                    Save
-                </Button>
             </Paper>
+            <Button
+                className={classes.button}
+                variant="contained"
+                color="primary"
+                disabled={updated}
+                onClick={handleParameterSave}
+            >
+                Save
+            </Button>
         </div>
     );
 }
