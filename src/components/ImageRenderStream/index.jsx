@@ -19,19 +19,19 @@ function a11yProps(index) {
     };
 }
 
-function ImageRenderStream(props){
-    const {classes, className, base64ImageCords, base64ImageStopNr, handleStartTraining, stateUpdate, episodeNumber, tabState, debounceStartTraining, handleTabStateChange} = props;
+function ImageRenderStream(props) {
+    const {classes, className, base64ImageCords, base64ImageStopNr, handleStartTraining, stateUpdate, episodeNumber, tabState, debounceStartTraining, debounceStartTesting, handleTabStateChange, handleStartTesting, testingResult, testingState, trainingState} = props;
     const [value, setValue] = React.useState(0);
     const [progress, setProgress] = React.useState(0);
 
     useEffect(() => {
         setProgress(((parseInt(stateUpdate.epoch, 10) + 1) / episodeNumber) * 100);
-    },[stateUpdate])
+    }, [stateUpdate])
 
     const rootClassName = classNames(classes.root, className);
 
 
-    return(
+    return (
         <div className={rootClassName}>
             <Paper style={{height: 800, maxHeight: 800, overflow: 'auto'}} elevation={3}>
                 <Tabs
@@ -77,17 +77,35 @@ function ImageRenderStream(props){
                     index={2}
                     value={tabState}
                 >
-                    {stateUpdate.policy_tours_base64.length > 0 ?
+                    {trainingState ?
                         <div>
-                        <LinearProgress className={classes.bar} variant="determinate" value={progress}/>
-                        <img
-                            className={classes.imgPlot}
-                            src={`data:image/png;base64,${stateUpdate.policy_tours_base64}`}
-                        />
+                            <LinearProgress className={classes.bar} variant="determinate" value={progress}/>
+                            <img
+                                className={classes.imgPlot}
+                                src={`data:image/png;base64,${stateUpdate.policy_tours_base64}`}
+                            />
+                        </div>
+                        :
+
+                        <p>
+                            No data available. Begin Training Instance.
+                        </p>
+                    }
+                </TabPanel>
+                <TabPanel
+                    index={3}
+                    value={tabState}
+                >
+                    {testingState ?
+                        <div>
+                            <img
+                                className={classes.imgPlot}
+                                src={`data:image/png;base64,${testingResult.final_tours_base64}`}
+                            />
                         </div>
                         :
                         <p>
-                            No data available. Begin Training.
+                            No data available. Begin Testing Instance.
                         </p>
                     }
                 </TabPanel>
@@ -105,7 +123,7 @@ function ImageRenderStream(props){
             <Button
                 className={classes.button}
                 variant="contained"
-                color="danger"
+                color="secondary"
                 disabled
             >
                 Stop Training
@@ -115,6 +133,8 @@ function ImageRenderStream(props){
                 className={classes.button}
                 variant="contained"
                 color="primary"
+                onClick={handleStartTesting}
+                disabled={debounceStartTesting}
             >
                 Start Testing
             </Button>
@@ -122,7 +142,7 @@ function ImageRenderStream(props){
             <Button
                 className={classes.button}
                 variant="contained"
-                color="danger"
+                color="secondary"
                 disabled
             >
                 Stop Testing
@@ -136,12 +156,17 @@ ImageRenderStream.propTypes = {
     base64ImageStopNr: PropTypes.string.isRequired,
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
+    debounceStartTesting: PropTypes.bool.isRequired,
     debounceStartTraining: PropTypes.bool.isRequired,
     episodeNumber: PropTypes.number.isRequired,
+    handleStartTesting: PropTypes.func.isRequired,
     handleStartTraining: PropTypes.func.isRequired,
     handleTabStateChange: PropTypes.func.isRequired,
     stateUpdate: PropTypes.object.isRequired,
     tabState: PropTypes.number.isRequired,
+    testingResult: PropTypes.object.isRequired,
+    testingState: PropTypes.bool.isRequired,
+    trainingState: PropTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(ImageRenderStream);

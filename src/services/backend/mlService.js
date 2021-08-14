@@ -10,4 +10,13 @@ export class MLService{
         });
     }
 
+    static startMLTesting(){
+        return fetch(`${baseUri}/testing/start`, {
+            method: 'GET',
+            headers: {
+            }
+        });
+    }
+
+
 }

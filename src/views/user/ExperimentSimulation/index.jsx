@@ -17,6 +17,7 @@ function ExperimentSimulation(props){
     const {classes, className} = props;
     const [parameterGroups, setParameterGroups] = useState();
     const [tabState, setTabState] = React.useState(0);
+
     const [stateUpdate, setStateUpdate] = useState({
         epoch: '',
         policy_reward: '',
@@ -29,6 +30,23 @@ function ExperimentSimulation(props){
         stats_title: ''
     });
 
+    const [testingResult, setTestingResult] = useState({
+        stop_amount: '',
+        testing_runtime: '',
+        amount_constructed_tours: '',
+        mean_box_amount_per_tour: '',
+        mean_volume_per_tour: '',
+        mean_weight_per_tour: '',
+        lost_volume_per_tour: '',
+        lost_weight_per_tour: '',
+        overall_distance: '',
+        mean_distance_per_tour: '',
+        overall_time_needed: '',
+        average_time_needed_per_tour: '',
+        final_tours_base64: '',
+        stats_title: ''
+    });
+
     const [base64ImageCords, setBase64ImageCords] = useState("");
     const [base64ImageStopNr, setBase64ImageStopNr] = useState("");
 
@@ -38,6 +56,7 @@ function ExperimentSimulation(props){
     const [updated, setUpdated] = useState(true);
 
     const [debounceStartTraining, setDebounceStartTraining] = useState(false);
+    const [debounceStartTesting, setDebounceStartTesting] = useState(false);
     const [trainingState, setTrainingState] = useState(false);
     const [testingState, setTestingState] = useState(false);
 
@@ -51,13 +70,45 @@ function ExperimentSimulation(props){
 
     const startMLTrainingInstance = useCallback(() => {
         setDebounceStartTraining(true);
+        setDebounceStartTesting(true);
         setTabState(2);
         MLService.startMLTraining().then(response => response.json()).then(response => {
-            console.log(response);
             setDebounceStartTraining(false);
+            setDebounceStartTesting(false);
         }, () => {
             alert('Error starting training instance');
             setDebounceStartTraining(false);
+            setDebounceStartTesting(false)
+        });
+    }, []);
+
+    const startMLTestingInstance = useCallback(() => {
+        setDebounceStartTraining(true);
+        setDebounceStartTesting(true);
+        setTabState(3);
+        MLService.startMLTesting().then(response => response.json()).then(obj => {
+            setTestingResult({
+                stop_amount: obj.stop_amount,
+                testing_runtime: obj.testing_runtime,
+                amount_constructed_tours: obj.amount_constructed_tours,
+                mean_box_amount_per_tour: obj.mean_box_amount_per_tour,
+                mean_volume_per_tour: obj.mean_volume_per_tour,
+                mean_weight_per_tour: obj.mean_weight_per_tour,
+                lost_volume_per_tour: obj.lost_volume_per_tour,
+                lost_weight_per_tour: obj.lost_weight_per_tour,
+                overall_distance: obj.overall_distance,
+                mean_distance_per_tour: obj.mean_distance_per_tour,
+                overall_time_needed: obj.overall_time_needed,
+                average_time_needed_per_tour: obj.average_time_needed_per_tour,
+                final_tours_base64: obj.final_tours_base64,
+                stats_title: 'Testing-Stats'
+            });
+            setDebounceStartTraining(false);
+            setDebounceStartTesting(false);
+        }, () => {
+            alert('Error starting testing instance');
+            setDebounceStartTraining(false);
+            setDebounceStartTesting(false)
         });
     }, []);
 
@@ -88,8 +139,15 @@ function ExperimentSimulation(props){
 
     const handleStartTraining = () => {
         setTrainingState(true);
+        setTestingState(false);
         startMLTrainingInstance();
     };
+
+    const handleStartTesting = () => {
+        setTrainingState(false);
+        setTestingState(true);
+        startMLTestingInstance();
+    }
 
     const handleTabStateChange = (event, newValue) => {
         setTabState(newValue);
@@ -165,18 +223,25 @@ function ExperimentSimulation(props){
                             <ImageRenderStream
                                 base64ImageCords={base64ImageCords}
                                 base64ImageStopNr={base64ImageStopNr}
+                                debounceStartTesting={debounceStartTesting}
                                 debounceStartTraining={debounceStartTraining}
                                 episodeNumber={parameterGroups['groups'][1]['num_episodes']}
+                                handleStartTesting={handleStartTesting}
                                 handleStartTraining={handleStartTraining}
                                 handleTabStateChange={handleTabStateChange}
                                 stateUpdate={stateUpdate}
                                 tabState={tabState}
+                                testingResult={testingResult}
+                                testingState={testingState}
+                                trainingState={trainingState}
                             />
                         }
                     </Grid>
                     <Grid item xs={3}>
                         <StatsRenderStream
                             stateUpdate={stateUpdate}
+                            testingResult={testingResult}
+                            testingState={testingState}
                             trainingState={trainingState}
                         />
                     </Grid>

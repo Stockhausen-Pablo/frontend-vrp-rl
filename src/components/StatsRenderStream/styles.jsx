@@ -13,6 +13,9 @@ export default theme => ({
         color: '#f3053d'
     },
     equalIcon:{
-        color: '#05ebf3'
+        color: '#0bb0b6'
+    },
+    statIcon:{
+        color: '#e45f12'
     }
 });

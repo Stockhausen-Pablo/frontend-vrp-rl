@@ -19,8 +19,13 @@ import DragHandleIcon from '@material-ui/icons/DragHandle';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 
+import TimerIcon from '@material-ui/icons/Timer';
+import TimelapseIcon from '@material-ui/icons/Timelapse';
+import MotorcycleIcon from '@material-ui/icons/Motorcycle';
+import BarChartIcon from '@material-ui/icons/BarChart';
+
 function StatsRenderStream(props){
-    const {classes, className, stateUpdate, trainingState} = props;
+    const {classes, className, stateUpdate, trainingState, testingState, testingResult} = props;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -37,11 +42,10 @@ function StatsRenderStream(props){
         }
     }
 
-
     return(
         <div className={rootClassName}>
             <Paper style={{height: 800, maxHeight: 800, overflow: 'auto'}} elevation={3}>
-                {trainingState ?
+                {trainingState && !testingState ?
                     <div>
                     <h2>&nbsp;{stateUpdate.stats_title}</h2>
                     <List className={classes.root}>
@@ -92,7 +96,117 @@ function StatsRenderStream(props){
                     </List>
                     </div>
                 :
-                    <p>No Training Instance found.</p>
+                testingState && !trainingState ?
+                    <div>
+                        <h2>&nbsp;{testingResult.stats_title}</h2>
+                        <List className={classes.root}>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <AssistantPhotoIcon color='primary'/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={testingResult.stop_amount}
+                                    secondary="Stop Amount"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <AssistantPhotoIcon color='primary'/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.amount_constructed_tours} secondary="Amount of Tours"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <TimerIcon color='primary'/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.testing_runtime} secondary="Testing Runtime in s"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <MotorcycleIcon className={classes.statIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.overall_distance} secondary="Overall needed Distance"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <MotorcycleIcon className={classes.statIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.mean_distance_per_tour} secondary="Average Distance per Tour"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <TimelapseIcon className={classes.statIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.overall_time_needed} secondary="Overall needed Time"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <TimelapseIcon className={classes.statIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.average_time_needed_per_tour} secondary="Average Time per Tour"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <BarChartIcon className={classes.equalIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.mean_box_amount_per_tour}
+                                              secondary="Average Box Amount per Tour"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <BarChartIcon className={classes.equalIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.mean_volume_per_tour}
+                                              secondary="Average Volume per Tour"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <BarChartIcon className={classes.equalIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.mean_weight_per_tour}
+                                              secondary="Average Weight per Tour"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <TrendingDownIcon className={classes.worseIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.lost_volume_per_tour}
+                                              secondary="Lost Volume per Tour"/>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <TrendingDownIcon className={classes.worseIcon}/>
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={testingResult.lost_weight_per_tour}
+                                              secondary="Lost Weight per Tour"/>
+                            </ListItem>
+                        </List>
+                    </div>
+                :
+                    <p>No Instance found.</p>
                 }
             </Paper>
         </div>
@@ -103,6 +217,8 @@ StatsRenderStream.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     stateUpdate: PropTypes.object.isRequired,
+    testingResult: PropTypes.object.isRequired,
+    testingState: PropTypes.bool.isRequired,
     trainingState: PropTypes.bool.isRequired,
 }
 
