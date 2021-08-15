@@ -23,9 +23,10 @@ import TimerIcon from '@material-ui/icons/Timer';
 import TimelapseIcon from '@material-ui/icons/Timelapse';
 import MotorcycleIcon from '@material-ui/icons/Motorcycle';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import Button from "@material-ui/core/Button";
 
 function StatsRenderStream(props){
-    const {classes, className, stateUpdate, trainingState, testingState, testingResult} = props;
+    const {classes, className, stateUpdate, trainingState, testingState, testingResult, deleteState, handleDeleteModel} = props;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -209,6 +210,14 @@ function StatsRenderStream(props){
                     <p>No Instance found.</p>
                 }
             </Paper>
+            <Button
+                className={classes.button}
+                disabled={deleteState}
+                onClick={handleDeleteModel}
+                variant="contained"
+            >
+                Delete ML-Model
+            </Button>
         </div>
     )
 }
@@ -216,6 +225,8 @@ function StatsRenderStream(props){
 StatsRenderStream.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired,
+    deleteState: PropTypes.bool.isRequired,
+    handleDeleteModel: PropTypes.func.isRequired,
     stateUpdate: PropTypes.object.isRequired,
     testingResult: PropTypes.object.isRequired,
     testingState: PropTypes.bool.isRequired,

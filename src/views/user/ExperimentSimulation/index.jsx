@@ -8,6 +8,7 @@ import ParameterSelector from "../../../components/ParameterSelector";
 
 import {ParameterService} from "../../../services/backend/parameterService"
 import {MLService} from "../../../services/backend/mlService"
+import {ModelService} from "../../../services/backend/modelService";
 import ImageRenderStream from "../../../components/ImageRenderStream";
 import Grid from '@material-ui/core/Grid';
 import StatsRenderStream from "../../../components/StatsRenderStream";
@@ -59,12 +60,24 @@ function ExperimentSimulation(props){
     const [debounceStartTesting, setDebounceStartTesting] = useState(false);
     const [trainingState, setTrainingState] = useState(false);
     const [testingState, setTestingState] = useState(false);
+    const [deleteState, setDeleteState] = useState(false);
 
     const loadParameterGroups = useCallback(() => {
         ParameterService.getParameterGroups().then(response => response.json()).then(response => {
             setParameterGroups(response);
         }, () => {
             alert('Error fetching parameter groups');
+        });
+    }, []);
+
+    const deleteCurrentMLModel = useCallback(() => {
+        ModelService.deleteModel().then(response => response.json()).then(response => {
+            console.log(response);
+            setDebounceStartTesting(true);
+            setDeleteState(true);
+            alert('Current ML-Model deleted.');
+        }, () => {
+            alert('Error fetching parameter groups.');
         });
     }, []);
 
@@ -75,6 +88,7 @@ function ExperimentSimulation(props){
         MLService.startMLTraining().then(response => response.json()).then(response => {
             setDebounceStartTraining(false);
             setDebounceStartTesting(false);
+            setDeleteState(false);
         }, () => {
             alert('Error starting training instance');
             setDebounceStartTraining(false);
@@ -85,6 +99,7 @@ function ExperimentSimulation(props){
     const startMLTestingInstance = useCallback(() => {
         setDebounceStartTraining(true);
         setDebounceStartTesting(true);
+        setDeleteState(true);
         setTabState(3);
         MLService.startMLTesting().then(response => response.json()).then(obj => {
             setTestingResult({
@@ -105,6 +120,7 @@ function ExperimentSimulation(props){
             });
             setDebounceStartTraining(false);
             setDebounceStartTesting(false);
+            setDeleteState(false);
         }, () => {
             alert('Error starting testing instance');
             setDebounceStartTraining(false);
@@ -135,6 +151,10 @@ function ExperimentSimulation(props){
 
     const handleParameterSave = () => {
         postParameterGroups(parameterGroups);
+    };
+
+    const handleDeleteModel = () => {
+        deleteCurrentMLModel();
     };
 
     const handleStartTraining = () => {
@@ -239,6 +259,8 @@ function ExperimentSimulation(props){
                     </Grid>
                     <Grid item xs={3}>
                         <StatsRenderStream
+                            deleteState={deleteState}
+                            handleDeleteModel={handleDeleteModel}
                             stateUpdate={stateUpdate}
                             testingResult={testingResult}
                             testingState={testingState}

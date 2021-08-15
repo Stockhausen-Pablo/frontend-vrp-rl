@@ -17,5 +17,12 @@ export default theme => ({
     },
     statIcon:{
         color: '#e45f12'
+    },
+    button: {
+        width: '100%',
+        padding: theme.spacing(1),
+        display: "flex",
+        marginTop: "10px",
+        backgroundColor: '#e30d0d'
     }
 });
